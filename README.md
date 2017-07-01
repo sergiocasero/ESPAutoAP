@@ -1,5 +1,5 @@
 # ESPAutoAP
-This library provides you auto-connection to your WiFi network, and if the ESP doesn't have the credentials, it will create custom AP, and you only need to call 1 Web service!!
+This library provides you auto-connection to your WiFi network, and if the ESP doesn't have the credentials, it will create custom AP, and you only need to call 1 Web service to pass the credentials!!
 
 # How use this library
 ```processing
