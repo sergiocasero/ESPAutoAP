@@ -1,6 +1,6 @@
 #include "ESPAutoAP.h"
 
-ESP8266WebServer server = ESP8266WebServer(8080);
+ESP8266WebServer autoAPServer = ESP8266WebServer(8080);
 
 int ssidStartAddress = 0;
 
@@ -82,14 +82,14 @@ void ESPAutoAP::setup() {
 		if(debug) Serial.println("Connected!! my IP is " + WiFi.localIP());
 	}
 
-	if(debug) Serial.println("Starting the server...");
+	if(debug) Serial.println("Starting the autoAPServer...");
 	delay(500);
-	server.begin();
+	autoAPServer.begin();
 	delay(250);
 
-	server.on ( "/ap/configure", HTTP_POST, []{
-		String ssid = server.arg("ssid");
-		String password = server.arg("password");
+	autoAPServer.on ( "/ap/configure", HTTP_POST, []{
+		String ssid = autoAPServer.arg("ssid");
+		String password = autoAPServer.arg("password");
 
 		if(debug) Serial.println("writing eeprom ssid:");
 		for (int i = ssidStartAddress; i < ssid.length(); ++i) {
@@ -109,11 +109,11 @@ void ESPAutoAP::setup() {
 
 		EEPROM.commit();
 
-		server.send(200, "application/json", "{\"configured\": \"ok\"}");
+		autoAPServer.send(200, "application/json", "{\"configured\": \"ok\"}");
 
 		ESP.restart();
 	});
-	server.on ( "/ap/reset", HTTP_POST, []{
+	autoAPServer.on ( "/ap/reset", HTTP_POST, []{
 		if(debug) Serial.println("Reseting all configurations...");
 
 		for (int i = ssidStartAddress; i <= passwordEndAddress; ++i) {
@@ -121,12 +121,12 @@ void ESPAutoAP::setup() {
 		}
 		EEPROM.commit();
 
-		server.send(200, "application/json", "{\"reset\": \"ok\"}");
+		autoAPServer.send(200, "application/json", "{\"reset\": \"ok\"}");
 
 		ESP.restart();
 	});
 }
 
 void ESPAutoAP::loop() {
-	server.handleClient();
+	autoAPServer.handleClient();
 }
